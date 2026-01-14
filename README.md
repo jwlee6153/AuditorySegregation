@@ -1,0 +1,188 @@
+# Auditory Segregation Experiment (PsychoPy)
+
+PsychoPy-based auditory segregation experiment examining how
+figure–background relationships affect figure detection in complex
+musical backgrounds.
+
+This repository focuses on **experimental implementation and code
+structure**, not on theoretical background or statistical results.
+
+---
+
+## Overview
+
+This project implements an auditory segregation experiment using
+**PsychoPy**.
+
+Participants listen to sequences of background chords and attempt to
+detect the presence or absence of a **figure tone** embedded within the
+background.
+
+The experiment consists of three phases:
+
+1. Practice phase  
+2. Threshold calibration phase (staircase)  
+3. Main experiment  
+
+All stimulus presentation, trial control, and data logging are handled
+within PsychoPy using a combination of **Builder loops** and **custom
+Python code**.
+
+---
+
+## Experimental Structure
+
+### Task
+
+- On each trial, participants listen to an auditory sequence
+- They indicate whether a **figure tone** is present or absent
+- Responses are made via keyboard
+- Reaction time and accuracy are recorded
+
+---
+
+## Practice Phase
+
+- Same task structure as the main experiment
+- Includes all condition combinations
+- **Figure tone intensity is set higher** than in the main experiment
+- Total number of trials is reduced
+- Feedback is provided after each response
+
+Purpose:
+- Familiarize participants with the task
+- Ensure understanding of figure detection before calibration
+
+---
+
+## Threshold Calibration Phase
+
+This phase calibrates the **individual detection threshold** for the
+figure tone.
+
+### Loop Structure
+
+- Implemented using PsychoPy’s **staircase loop type**
+- Staircase logic is handled by PsychoPy loop settings
+- Separate staircases are defined for condition blocks
+
+---
+
+### Staircase Procedure
+
+- **Method:** 1-up / 2-down adaptive staircase
+- The figure tone is **present on every trial**
+- Participants report whether they hear the figure tone
+
+Rules:
+- Two correct detections → figure intensity decreases
+- One missed detection → figure intensity increases
+
+---
+
+### Staircase Parameters
+
+- Initial level difference: **6 dB**
+- Step size:
+  - Starts at **2 dB**
+  - Reduced to **0.5 dB** after multiple reversals
+- Each staircase terminates after a fixed number of reversals
+- Threshold is estimated from the final reversals
+
+The final figure intensity used in the main experiment is determined
+using the **lowest threshold across blocks**.
+
+---
+
+### Threshold Script Organization
+
+Threshold calibration is implemented across **two Python scripts**:
+
+- `threshold_1.py`
+- `threshold_2.py`
+
+The full calibration consists of **four condition-specific blocks**.
+For practical reasons (file size and manageability), the blocks are split
+across two scripts, with **two blocks per script**.
+
+This split is purely organizational and does not reflect conceptual
+differences between blocks.
+
+---
+
+## Main Experiment
+
+- Uses the calibrated figure intensity
+- No feedback is provided
+- Same task structure as the practice phase
+
+### Trial Organization
+
+- All condition combinations are **fully intermixed**
+- Background type, figure type, and figure presence vary randomly
+- Trials are divided into blocks **only to allow participant breaks**
+
+---
+
+## Condition CSV File
+
+Trial conditions are controlled using an external CSV file loaded into
+PsychoPy loops.
+
+Each row corresponds to one trial.
+
+### Columns
+
+- `target` – audio file path for the figure tone  
+- `tarcategory` – figure category label  
+- `background` – background type  
+- `figure` – figure presence flag (1 = present, 0 = absent)  
+- `correct` – correct response key 
+- `relation` – figure–background relation label  
+
+### Usage in PsychoPy
+
+- The CSV file is assigned to a loop component
+- Values are read automatically on each trial
+- Variables control stimulus selection and response evaluation
+
+---
+
+## PsychoPy Implementation Notes
+
+- Built using **PsychoPy Builder** with embedded Python code
+- Audio stimuli are pre-generated `.wav` files
+- Loop logic:
+  - Practice: standard loop
+  - Threshold: staircase loop
+  - Main experiment: randomized loop
+- Response logging is handled automatically by PsychoPy
+
+---
+
+## Data Output
+
+- PsychoPy generates one data file per participant
+- Logged variables include:
+  - Condition parameters
+  - Responses
+  - Accuracy
+  - Reaction times
+
+Participant data are **not included** in this repository.
+
+---
+
+## Repository Structure
+
+- `experiments/` – PsychoPy experiment implementation  
+    - `main/` – Main experiment scripts 
+    - `threshold/` – Threshold calibration scripts (staircase procedure)
+    - `wav/` – Auditory stimulus files used in the experiment
+- `analysis/` – Notes related to statistical analysis  
+
+---
+
+## Notes
+- All auditory stimuli were generated by the author and are fully included to support reproducibility.
+- Participant data are not included in this repository
